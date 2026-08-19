@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useExpenses } from '../context/ExpenseContext'
+import '../styles/expense.css'
 
 // ============================================================
 // OWNER: feature/expense
@@ -11,24 +12,43 @@ import { useExpenses } from '../context/ExpenseContext'
 // ============================================================
 
 export default function Expenses() {
-  const { expenses, categories, addExpense, deleteExpense } = useExpenses()
+  const { expenses, categories, addExpense, updateExpense, deleteExpense } = useExpenses()
   const [title, setTitle] = useState('')
   const [amount, setAmount] = useState('')
   const [categoryId, setCategoryId] = useState(categories[0]?.id || '')
+  const [editingId, setEditingId] = useState(null)
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (!title || !amount) return
-    addExpense({
-      title,
-      amount: parseFloat(amount),
-      categoryId,
-      date: new Date().toISOString().slice(0, 10),
-      note: '',
-    })
-    setTitle('')
-    setAmount('')
-  }
+
+const handleSubmit = (e) => {
+e.preventDefault()
+
+if (!title || !amount || parseFloat(amount) <= 0) return
+
+const expenseData = {
+title,
+amount: parseFloat(amount),
+categoryId,
+date: new Date().toISOString().slice(0, 10),
+note: '',
+}
+
+if (editingId) {
+updateExpense(editingId, expenseData)
+setEditingId(null)
+} else {
+addExpense(expenseData)
+}
+
+setTitle('')
+setAmount('')
+}
+
+const handleEdit = (expense) => {
+  setEditingId(expense.id)
+  setTitle(expense.title)
+  setAmount(expense.amount)
+  setCategoryId(expense.categoryId)
+}
 
   return (
     <div className="page">
@@ -46,27 +66,37 @@ export default function Expenses() {
           placeholder="Amount"
           type="number"
           step="0.01"
+          min="0.01"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
         <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
+{cat.name === 'Food & Drink' && '🍔 '}
+{cat.name === 'Transport' && '🚗 '}
+{cat.name === 'Housing' && '🏠 '}
+{cat.name === 'Entertainment' && '🎬 '}
+{cat.name === 'Other' && '📦 '}
+{cat.name}            </option>
           ))}
         </select>
-        <button type="submit">Add expense</button>
+<button type="submit">
+{editingId ? 'Update expense' : 'Add expense'}
+</button>
       </form>
 
       <div className="card">
         {expenses.map((exp) => (
-          <div key={exp.id} className="list-row">
-            <span>{exp.title}</span>
-            <span>${exp.amount.toFixed(2)}</span>
-            {/* TODO(feature/expense): add an "edit" button using updateExpense */}
-            <button onClick={() => deleteExpense(exp.id)}>Delete</button>
-          </div>
+          <div key={exp.id} className="expense-row">
+  <span className="expense-title">{exp.title}</span>
+  <span className="expense-amount">${exp.amount.toFixed(2)}</span>
+
+  <div className="expense-actions">
+    <button onClick={() => handleEdit(exp)}>Edit</button>
+    <button onClick={() => deleteExpense(exp.id)}>Delete</button>
+  </div>
+</div>
         ))}
       </div>
     </div>

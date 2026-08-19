@@ -19,7 +19,17 @@ export function ExpenseProvider({ children }) {
   const [expenses, setExpenses] = useState(initialExpenses)
   const [categories, setCategories] = useState(initialCategories)
   const [budgets, setBudgets] = useState(initialBudgets)
-  const [user, setUser] = useState(initialUser)
+
+  // ---- feature/auth - Initialize from localStorage -----
+  const [registeredUsers, setRegisteredUsers] = useState(() => {
+    const saved = localStorage.getItem('registeredUsers')
+    return saved ? JSON.parse(saved) : []
+  })
+
+  const [currentUser, setCurrentUser] = useState(() => {
+    const saved = localStorage.getItem('currentUser')
+    return saved ? JSON.parse(saved) : null
+  })
 
   // ---- feature/expense -----------------------------------------------
   const addExpense = (expense) => {
@@ -62,9 +72,90 @@ export function ExpenseProvider({ children }) {
     })
   }
 
-  // ---- feature/auth --------------------------------------------------
+  // ---- feature/auth - FIXED LOGIC -----------------------------------------------
+  
+  // SIGNUP: Creates new account, rejects if email already exists
+  const signup = (name, email, password) => {
+    // Validate inputs
+    if (!name || !email || !password) {
+      return { success: false, error: 'All fields required' }
+    }
+    if (password.length < 6) {
+      return { success: false, error: 'Password must be 6+ characters' }
+    }
+    if (!email.includes('@')) {
+      return { success: false, error: 'Valid email required' }
+    }
+
+    // Check if email already exists
+    const userExists = registeredUsers.some((u) => u.email === email)
+    if (userExists) {
+      return { success: false, error: 'Email already registered' }
+    }
+
+    // Create new user
+    const newUser = { email, password, name }
+    const updatedUsers = [...registeredUsers, newUser]
+    
+    // Save registered users to localStorage
+    setRegisteredUsers(updatedUsers)
+    localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers))
+
+    // Auto-login after signup
+    setCurrentUser(newUser)
+    localStorage.setItem('currentUser', JSON.stringify(newUser))
+
+    return { success: true, error: null }
+  }
+
+  // LOGIN: Validates email & password against registered users
+  const login = (email, password) => {
+    // Validate inputs
+    if (!email || !password) {
+      return { success: false, error: 'Email and password required' }
+    }
+
+    // Find user with matching email
+    const user = registeredUsers.find((u) => u.email === email)
+
+    // User doesn't exist
+    if (!user) {
+      return { success: false, error: "Account doesn't exist. Please signup first" }
+    }
+
+    // Password doesn't match
+    if (user.password !== password) {
+      return { success: false, error: 'Invalid password' }
+    }
+
+    // Login successful
+    setCurrentUser(user)
+    localStorage.setItem('currentUser', JSON.stringify(user))
+    return { success: true, error: null }
+  }
+
+  // LOGOUT: Clears current user
+  const logout = () => {
+    setCurrentUser(null)
+    localStorage.removeItem('currentUser')
+  }
+
+  // UPDATE USER: Updates current user info
   const updateUser = (updates) => {
-    setUser((prev) => ({ ...prev, ...updates }))
+    if (!currentUser) return
+
+    const updatedUser = { ...currentUser, ...updates }
+    
+    // Update current user
+    setCurrentUser(updatedUser)
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser))
+
+    // Also update in registered users list
+    const updatedUsers = registeredUsers.map((u) =>
+      u.email === currentUser.email ? updatedUser : u
+    )
+    setRegisteredUsers(updatedUsers)
+    localStorage.setItem('registeredUsers', JSON.stringify(updatedUsers))
   }
 
   // ---- shared helpers (used by dashboard + reports) ----------------------
@@ -86,13 +177,18 @@ export function ExpenseProvider({ children }) {
     expenses,
     categories,
     budgets,
-    user,
+    currentUser,
+    isLoggedIn: !!currentUser,
+    registeredUsers,
     addExpense,
     updateExpense,
     deleteExpense,
     addCategory,
     deleteCategory,
     setBudgetForCategory,
+    login,
+    signup,
+    logout,
     updateUser,
     totalSpent,
     spentByCategory,

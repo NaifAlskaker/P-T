@@ -28,4 +28,5 @@ export const initialBudgets = [
 export const initialUser = {
   name: 'Guest User',
   email: 'guest@example.com',
+  password: 'password123',
 }

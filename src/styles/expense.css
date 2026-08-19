@@ -1,0 +1,41 @@
+.expense-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 12px 0;
+  border-bottom: 1px solid 
+#e3e6e3;
+}
+
+.expense-row:last-child {
+  border-bottom: none;
+}
+
+.expense-title {
+  flex: 1;
+}
+
+.expense-amount {
+  width: 120px;
+  text-align: left;
+}
+
+.expense-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.expense-actions button {
+  min-width: 70px;
+}
+
+.expense-actions button:last-child {
+  background: 
+#dc3545;
+}
+
+.expense-actions button:last-child:hover {
+  background: 
+#bb2d3b;
+}

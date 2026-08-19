@@ -20,7 +20,7 @@ export const initialExpenses = [
 export const initialBudgets = [
   { categoryId: 'food', limit: 200 },
   { categoryId: 'transport', limit: 60 },
-  { categoryId: 'housing', limit: 500 },
+  { categoryId: 'housing', limit: 600 },
   { categoryId: 'fun', limit: 50 },
   { categoryId: 'other', limit: 40 },
 ]

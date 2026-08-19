@@ -1,5 +1,5 @@
 import { useExpenses } from '../context/ExpenseContext'
-
+import '../styles/Budget.css'
 // ============================================================
 // OWNER: feature/dashboard
 // Goal: give the user an at-a-glance view of their spending —
@@ -10,35 +10,91 @@ import { useExpenses } from '../context/ExpenseContext'
 //   expenses, categories, budgets, totalSpent, spentByCategory
 // ============================================================
 
-export default function Dashboard() {
-  const { expenses, categories, totalSpent, spentByCategory } = useExpenses()
+export default function Budget() {
+  const {
+    budgets,
+    categories,
+    spentByCategory,
+    setBudgetForCategory,
+  } = useExpenses()
 
   return (
     <div className="page">
-      <h1>Dashboard</h1>
+      <h1>Budget</h1>
 
       <div className="card">
-        <p className="muted">Total spent</p>
-        <h2>${totalSpent.toFixed(2)}</h2>
-      </div>
+        {categories.map((cat) => {
+          const budget = budgets.find(
+            (b) => b.categoryId === cat.id
+          )
 
-      {/* TODO(feature/dashboard): render spentByCategory as a chart,
-          e.g. simple bars using the category color for each key. */}
-      <div className="card">
-        <p className="muted">By category</p>
-        <ul>
-          {categories.map((cat) => (
-            <li key={cat.id}>
-              {cat.name}: ${(spentByCategory[cat.id] || 0).toFixed(2)}
-            </li>
-          ))}
-        </ul>
-      </div>
+          const limit = budget?.limit ?? 0
+          const spent = spentByCategory[cat.id] || 0
 
-      {/* TODO(feature/dashboard): show the 5 most recent expenses */}
-      <div className="card">
-        <p className="muted">Recent activity</p>
-        <p>{expenses.length} transactions logged so far.</p>
+          const percentage =
+            limit > 0
+              ? Math.min((spent / limit) * 100, 100)
+              : 0
+
+          let statusClass = 'safe'
+
+          if (limit > 0) {
+            if (spent >= limit) {
+              statusClass = 'danger'
+            } else if (spent >= limit * 0.8) {
+              statusClass = 'warning'
+            }
+          }
+
+          return (
+            <div
+              key={cat.id}
+              className="budget-card"
+            >
+              <div className="budget-header">
+                <h3>{cat.name}</h3>
+
+                <span>
+                  ${spent.toFixed(2)} / ${limit.toFixed(2)}
+                </span>
+              </div>
+
+              <input
+                type="number"
+                min="0"
+                value={limit}
+                placeholder="Set budget"
+                onChange={(e) =>
+                  setBudgetForCategory(
+                    cat.id,
+                    parseFloat(e.target.value) || 0
+                  )
+                }
+              />
+
+              <div className="progress-bar">
+                <div
+                  className={`progress-fill ${statusClass}`}
+                  style={{
+                    width: `${percentage}%`,
+                  }}
+                />
+              </div>
+
+              {statusClass === 'warning' && (
+                <p className="warning-text">
+                  Close to budget limit
+                </p>
+              )}
+
+              {statusClass === 'danger' && (
+                <p className="danger-text">
+                  Budget exceeded
+                </p>
+              )}
+            </div>
+          )
+        })}
       </div>
     </div>
   )

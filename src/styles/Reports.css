@@ -1,0 +1,213 @@
+
+
+.reports-page {
+  --rp-bg-soft: #eef7f0;
+  --rp-bg-mid: #dcece0;
+  --rp-surface: rgba(255, 255, 255, 0.78);
+  --rp-surface-strong: rgba(255, 255, 255, 0.92);
+  --rp-border: rgba(47, 111, 94, 0.18);
+  --rp-ink: #1c2b22;
+  --rp-muted: #5c7268;
+  --rp-accent: #2f6f5e;
+  --rp-accent-strong: #24594b;
+  --rp-accent-soft: #d6ecdf;
+        background-image:
+    linear-gradient(180deg, rgba(238, 247, 240, 0.9) 0%, rgba(220, 236, 224, 0.94) 100%),
+    url('img1.jpg');
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--rp-ink);
+}
+
+
+@media (max-width: 768px) {
+  .reports-page {
+    /* fixed backgrounds can jitter/scroll oddly on mobile Safari */
+    background-attachment: scroll;
+  }
+}
+
+.reports-page .page {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  box-sizing: border-box;
+}
+
+.reports-page h1 {
+  margin-bottom: 1.5rem;
+  color: var(--rp-accent-strong);
+}
+
+.reports-page .card {
+  background: var(--rp-surface);
+  border: 1px solid var(--rp-border);
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(31, 74, 61, 0.08);
+}
+
+.reports-page .card-title {
+  margin: 0 0 0.9rem;
+  font-size: 1rem;
+  color: var(--rp-accent-strong);
+}
+
+/* ---------- Filters ---------- */
+
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.75rem 1rem;
+}
+
+.reports-page select,
+.reports-page input[type='date'] {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--rp-border);
+  border-radius: 8px;
+  background: var(--rp-surface-strong);
+  color: var(--rp-ink);
+  font-size: 0.9rem;
+}
+
+.reports-page select:focus,
+.reports-page input[type='date']:focus {
+  outline: none;
+  border-color: var(--rp-accent);
+  box-shadow: 0 0 0 3px var(--rp-accent-soft);
+}
+
+.inline-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--rp-muted);
+  margin: 0;
+}
+
+.btn-primary,
+.btn-ghost {
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background: var(--rp-accent);
+  color: #fff;
+  border-color: var(--rp-accent);
+}
+
+.btn-primary:hover {
+  background: var(--rp-accent-strong);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--rp-accent-strong);
+  border-color: var(--rp-border);
+}
+
+.btn-ghost:hover {
+  background: var(--rp-accent-soft);
+}
+
+.total-line {
+  margin: 1rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.total-line span {
+  color: var(--rp-accent-strong);
+}
+
+.total-line .muted {
+  font-weight: 400;
+}
+
+/* ---------- Chart ---------- */
+
+.chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 64px;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.chart-label {
+  font-size: 0.82rem;
+  color: var(--rp-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chart-bar-track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--rp-accent-soft);
+  overflow: hidden;
+}
+
+.chart-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--rp-accent), var(--rp-accent-strong));
+  transition: width 0.3s ease;
+}
+
+.chart-amount {
+  text-align: right;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--rp-ink);
+}
+
+/* ---------- List ---------- */
+
+.reports-page .list-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--rp-border);
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.reports-page .list-row:last-child {
+  border-bottom: none;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.muted {
+  color: var(--rp-muted);
+  font-size: 0.85rem;
+}

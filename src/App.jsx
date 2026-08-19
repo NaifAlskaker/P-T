@@ -1,81 +1,27 @@
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Dashboard from "./pages/Dashboard";
+import Expenses from "./pages/Expenses";
+import Categories from "./pages/Categories";
+import Budget from "./pages/Budget";
+import Reports from "./pages/Reports";
+import Account from "./pages/Account";
 
-import { useState } from "react";
-
-function App() {
-  const [task, setTask] = useState("ABCv ");
-  const [tasks, setTasks] = useState([]);
-
-  function handleAddTask() {
-    if (task.trim() === "") return;
-
-    setTasks([
-      ...tasks,
-      {
-        text: task,
-        completed: false,
-      },
-    ]);
-
-    setTask("");
-  }
-
-  function toggleTask(index) {
-    const updatedTasks = tasks.map((item, i) =>
-      i === index
-        ? { ...item, completed: !item.completed }
-        : item
-    );
-
-    setTasks(updatedTasks);
-  }
-
-  function deleteTask(index) {
-    const updatedTasks = tasks.filter((item, i) => i !== index);
-    setTasks(updatedTasks);
-  }
-
+export default function App() {
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>To-Do List</h1>
+    <div className="app">
+      <Navbar />
 
-      <input
-        type="text"
-        placeholder="Enter task"
-        value={task}
-        onChange={(e) => setTask(e.target.value)}
-      />
-
-      <button onClick={handleAddTask}>Add Task</button>
-
-      <ul>
-        {tasks.map((item, index) => (
-          <li
-            key={index}
-            style={{
-              textDecoration: item.completed ? "line-through" : "none",
-              marginBottom: "10px",
-            }}
-          >
-            {item.text}
-
-            <button
-              style={{ marginLeft: "10px" }}
-              onClick={() => toggleTask(index)}
-            >
-              {item.completed ? "Undo" : "Complete"}
-            </button>
-
-            <button
-              style={{ marginLeft: "10px" }}
-              onClick={() => deleteTask(index)}
-            >
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
+      <main className="main">
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/expenses" element={<Expenses />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/budget" element={<Budget />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/account" element={<Account />} />
+        </Routes>
+      </main>
     </div>
   );
 }
-
-export default App;
